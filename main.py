@@ -6,14 +6,19 @@ import numpy as np
 import time
 import dlib
 import cv2
+from pynput.mouse import Button, Controller
+
+mouse = Controller()
 
 
-def smile(mouth):
-    A = dist.euclidean(mouth[3], mouth[9])
-    B = dist.euclidean(mouth[2], mouth[10])
-    C = dist.euclidean(mouth[4], mouth[8])
+def smile(the_mouth):
+    if True:
+        return 0
+    A = dist.euclidean(the_mouth[3], the_mouth[9])
+    B = dist.euclidean(the_mouth[2], the_mouth[10])
+    C = dist.euclidean(the_mouth[4], the_mouth[8])
     avg = (A + B + C) / 3
-    D = dist.euclidean(mouth[0], mouth[6])
+    D = dist.euclidean(the_mouth[0], the_mouth[6])
     mar = avg / D
     return mar
 
@@ -68,7 +73,11 @@ while True:
 
         left_eye = shape[face_utils.FACIAL_LANDMARKS_IDXS["left_eye"][0]:face_utils.FACIAL_LANDMARKS_IDXS["left_eye"][1]]
         #left = smile(mouth)
+        print(left_eye)
         leftHull = cv2.convexHull(left_eye)
+        print(eye_aspect_ratio(left_eye))
+
+
         # print(shape)
         cv2.drawContours(frame, [left_eye], -1, (0, 255, 0), 1)
 
@@ -77,6 +86,10 @@ while True:
         rightHull = cv2.convexHull(right_eye)
         # print(shape)
         cv2.drawContours(frame, [shape], -1, (0, 255, 0), 1)
+
+        if eye_aspect_ratio(left_eye) < 0.18 and eye_aspect_ratio(right_eye) < 0.18:
+            mouse.press(Button.left)
+            mouse.release(Button.left)
 
         nose = shape[
                     face_utils.FACIAL_LANDMARKS_IDXS["nose"][0]:face_utils.FACIAL_LANDMARKS_IDXS["nose"][1]]
