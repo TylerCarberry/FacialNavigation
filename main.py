@@ -27,8 +27,6 @@ def items_within_percentage(num1, num2, percent):
 
 
 def smile(the_mouth):
-    if True:
-        return 0
     A = dist.euclidean(the_mouth[3], the_mouth[9])
     B = dist.euclidean(the_mouth[2], the_mouth[10])
     C = dist.euclidean(the_mouth[4], the_mouth[8])
