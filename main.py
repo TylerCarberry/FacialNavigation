@@ -11,6 +11,21 @@ from pynput.mouse import Button, Controller
 mouse = Controller()
 
 
+def average_of_array(a):
+    res = [0, 0]
+    for item in a:
+        res[0] += item[0]
+        res[1] += item[1]
+    return res[0] / len(a), res[1] / len(a)
+
+
+def items_within_percentage(num1, num2, percent):
+    if num1 < num2:
+        return num1 * (1 + percent) > num2
+    else:
+        return num2 * (1 + percent) > num1
+
+
 def smile(the_mouth):
     if True:
         return 0
@@ -59,7 +74,7 @@ cv2.namedWindow("test")
 
 while True:
     frame = vs.read()
-    frame = imutils.resize(frame, width=450)
+    frame = imutils.resize(frame, width=1000)
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     rects = detector(gray, 0)
     for rect in rects:
@@ -73,9 +88,9 @@ while True:
 
         left_eye = shape[face_utils.FACIAL_LANDMARKS_IDXS["left_eye"][0]:face_utils.FACIAL_LANDMARKS_IDXS["left_eye"][1]]
         #left = smile(mouth)
-        print(left_eye)
+        #print(left_eye)
         leftHull = cv2.convexHull(left_eye)
-        print(eye_aspect_ratio(left_eye))
+        #print(eye_aspect_ratio(left_eye))
 
 
         # print(shape)
@@ -87,9 +102,10 @@ while True:
         # print(shape)
         cv2.drawContours(frame, [shape], -1, (0, 255, 0), 1)
 
-        if eye_aspect_ratio(left_eye) < 0.18 and eye_aspect_ratio(right_eye) < 0.18:
-            mouse.press(Button.left)
-            mouse.release(Button.left)
+
+        # if eye_aspect_ratio(left_eye) < 0.18 and eye_aspect_ratio(right_eye) < 0.18:
+        #     mouse.press(Button.left)
+        #     mouse.release(Button.left)
 
         nose = shape[
                     face_utils.FACIAL_LANDMARKS_IDXS["nose"][0]:face_utils.FACIAL_LANDMARKS_IDXS["nose"][1]]
@@ -97,6 +113,57 @@ while True:
         noseHull = cv2.convexHull(nose)
         # print(shape)
         cv2.drawContours(frame, [noseHull], -1, (0, 255, 0), 1)
+
+        #distance_left_eye_to_nose = average_of_array(left_eye)
+
+        #print("LEFT:", average_of_array(left_eye))
+        #print("NOSE:", average_of_array(nose))
+        #print("RIGHT:",average_of_array(right_eye))
+        #print("------")
+
+        distance_left_eye_to_nose = average_of_array(left_eye)[0] - average_of_array(nose)[0]
+        distance_right_eye_to_nose = average_of_array(nose)[0] - average_of_array(right_eye)[0]
+        distance_between_eyes = average_of_array(left_eye)[0] - average_of_array(right_eye)[0]
+
+        average_of_eyes = average_of_array(left_eye + right_eye)
+        average_of_nose = nose[6] #average_of_array(nose)
+        average_of_mouth = average_of_array(mouth)
+
+        distance_eye_to_nose = average_of_eyes[1] - average_of_nose[1]
+        distance_nose_to_mouth = average_of_mouth[1] - average_of_nose[1]
+
+        x, y = 0,0
+
+        print(distance_eye_to_nose / distance_nose_to_mouth * distance_between_eyes)
+
+        if distance_eye_to_nose / distance_nose_to_mouth < 3:
+            print("UP")
+            y -= 5
+        else:
+            print("DOWN")
+            y += 5
+
+        if items_within_percentage(distance_left_eye_to_nose, distance_right_eye_to_nose, 0.2):
+            pass
+        elif items_within_percentage(distance_left_eye_to_nose, distance_right_eye_to_nose, 0.4):
+            if distance_right_eye_to_nose > distance_left_eye_to_nose:
+                print("LEFT")
+                x -= 5
+            else:
+                print("RIGHT")
+                x += 5
+        else:
+            if distance_right_eye_to_nose > distance_left_eye_to_nose:
+                print("LEFT")
+                x -= 10
+            else:
+                print("RIGHT")
+                x += 10
+
+        if x != 0 or y != 0:
+            print("Moving", x, y)
+            mouse.move(x, y)
+
 
         if mar <= .3 or mar > .38:
             COUNTER += 1
