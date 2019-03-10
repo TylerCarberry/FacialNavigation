@@ -13,8 +13,9 @@
 # limitations under the License.
 
 import sys
+import google.cloud
 
-def run_quickstart(timeinsecs):
+def run_quickstart():
     # [START speech_quickstart]
     import io
     import os
@@ -33,7 +34,7 @@ def run_quickstart(timeinsecs):
     # [END speech_python_migration_client]
 
     # Instantiates an audio file
-    record(timeinsecs)
+    record.run(5)
 
     # The name of the audio file to transcribe
     file_name = os.path.join(
@@ -43,11 +44,10 @@ def run_quickstart(timeinsecs):
     # Loads the audio into memory
     with io.open(file_name, 'rb') as audio_file:
         content = audio_file.read()
-        audio = types.RecognitionApudio(content=content)
+        audio = types.RecognitionAudio(content=content)
 
     config = types.RecognitionConfig(
         encoding=enums.RecognitionConfig.AudioEncoding.LINEAR16,
-        sample_rate_hertz=16000,
         language_code='en-US')
 
     # Detects speech in the audio file
@@ -57,6 +57,5 @@ def run_quickstart(timeinsecs):
         print('Transcript: {}'.format(result.alternatives[0].transcript))
     # [END speech_quickstart]
 
-
 if __name__ == '__main__':
-    run_quickstart(sys.argv)
+    run_quickstart()
