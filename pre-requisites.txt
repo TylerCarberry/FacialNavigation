@@ -1,0 +1,7 @@
+pip installs
+- pyaudio
+- wave
+- sys
+- google-cloud-speech
+
+Google cloud sdk
