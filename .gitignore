@@ -1,2 +1,10 @@
 
 venv/
+
+*.pyc
+
+*.wav
+
+\.idea/misc\.xml
+
+\.idea/
