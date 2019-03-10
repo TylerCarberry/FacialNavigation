@@ -103,6 +103,8 @@ def main():
 
                 mouth = shape[face_utils.FACIAL_LANDMARKS_IDXS["mouth"][0]:face_utils.FACIAL_LANDMARKS_IDXS["mouth"][1]]
                 # mar = smile(mouth)
+                isMouthOpen = is_mouth_open(mouth)
+                print('is mouth open? ', isMouthOpen)
                 mouthHull = cv2.convexHull(mouth)
                 # print(shape)
                 cv2.drawContours(frame, [mouthHull], -1, (0, 255, 0), 1)
@@ -157,26 +159,26 @@ def main():
 
                 x, y = 0, 0
 
-                print(distance_between_eyes / (distance_eye_to_nose / distance_nose_to_mouth))
+                # print(distance_between_eyes / (distance_eye_to_nose / distance_nose_to_mouth))
 
                 if euler_angle[0, 0] < -5:
-                    print("UP")
+                    # print("UP")
                     y -= 5
                     #
                 elif euler_angle[0,0] > 0:
-                    print("DOWN")
+                    # print("DOWN")
                     y += 5
                     # if euler_angle[0,0] > 10:
                     #     y += 5
 
 
                 if euler_angle[1, 0] < -10:
-                    print("LEFT")
+                    # print("LEFT")
                     x -= 5
                     if euler_angle[1,0] < -20:
                         x -= 5
                 elif euler_angle[1,0] > 10:
-                    print("RIGHT")
+                    # print("RIGHT")
                     x += 5
                     if euler_angle[1,0] > 20:
                         x += 5
@@ -199,7 +201,7 @@ def main():
                 #         x += 10
 
                 if x != 0 or y != 0:
-                    print("Moving", x, y)
+                    # print("Moving", x, y)
                     mouse.move(x, y)
 
             cv2.imshow("demo", frame)
@@ -238,6 +240,22 @@ def average_of_array(a):
         res[0] += item[0]
         res[1] += item[1]
     return res[0] / len(a), res[1] / len(a)
+
+def is_mouth_open(the_mouth):
+    is_open = False
+
+    A = dist.euclidean(the_mouth[3], the_mouth[9])
+    B = dist.euclidean(the_mouth[2], the_mouth[10])
+    C = dist.euclidean(the_mouth[4], the_mouth[8])
+    avg = (A + B + C) / 3
+    D = dist.euclidean(the_mouth[0], the_mouth[6])
+    mar = avg / D
+
+    print('mar', mar)
+    threshold = 0.55
+    if mar >= threshold:
+        is_open = True
+    return is_open
 
 
 if __name__ == '__main__':
