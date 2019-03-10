@@ -2,6 +2,8 @@ import pyaudio
 import wave
 import sys
 
+# run - initializes recording from a standard microphone.
+# @param arg is an integer for the duration of recording in seconds
 def run(arg):
     FORMAT = pyaudio.paInt16
     CHANNELS = 1
@@ -22,6 +24,7 @@ def run(arg):
     for i in range(0, int(RATE / CHUNK * RECORD_SECONDS)):
         data = stream.read(CHUNK)
         frames.append(data)
+        
     print ("finished recording")
     
     
