@@ -50,6 +50,7 @@ line_pairs = [[0, 1], [1, 2], [2, 3], [3, 0],
 
 finished = False
 
+
 def get_head_pose(shape):
     image_pts = np.float32([shape[17], shape[21], shape[22], shape[26], shape[36],
                             shape[39], shape[42], shape[45], shape[31], shape[35],
@@ -83,6 +84,7 @@ def main():
     while cap.isOpened():
         ret, frame = cap.read()
         frame = imutils.resize(frame, width=512)
+        frame = cv2.flip(frame, 1)
         if ret:
             face_rects = detector(frame, 0)
 
@@ -105,7 +107,8 @@ def main():
                 # cv2.putText(frame, "Z: " + "{:7.2f}".format(euler_angle[2, 0]), (20, 80), cv2.FONT_HERSHEY_SIMPLEX,
                 #             0.75, (0, 0, 0), thickness=2)
 
-                the_mouth = shape[face_utils.FACIAL_LANDMARKS_IDXS["mouth"][0]:face_utils.FACIAL_LANDMARKS_IDXS["mouth"][1]]
+                the_mouth = shape[
+                            face_utils.FACIAL_LANDMARKS_IDXS["mouth"][0]:face_utils.FACIAL_LANDMARKS_IDXS["mouth"][1]]
                 isMouthOpen = is_mouth_open(the_mouth)
 
                 if isMouthOpen and timestamp < time.time() - 10:
@@ -169,27 +172,29 @@ def main():
                 #
                 # print(distance_between_eyes / (distance_eye_to_nose / distance_nose_to_mouth))
 
+                print(euler_angle)
+
                 if euler_angle[0, 0] < -5:
                     # print("UP")
-                    y -= 5
-                    #
-                elif euler_angle[0,0] > 0:
+                    y -= 2
+                    if euler_angle[0,0] < -12:
+                        y -= 8
+                elif euler_angle[0, 0] > 0:
                     # print("DOWN")
-                    y += 5
-                    # if euler_angle[0,0] > 10:
-                    #     y += 5
-
+                    y += 2
+                    if euler_angle[0,0] > 7:
+                        y += 8
 
                 if euler_angle[1, 0] < -10:
                     # print("LEFT")
-                    x -= 5
-                    if euler_angle[1,0] < -20:
-                        x -= 5
-                elif euler_angle[1,0] > 10:
+                    x += 2
+                    if euler_angle[1, 0] < -24:
+                        x += 8
+                elif euler_angle[1, 0] > 10:
                     # print("RIGHT")
-                    x += 5
-                    if euler_angle[1,0] > 20:
-                        x += 5
+                    x -= 2
+                    if euler_angle[1, 0] > 24:
+                        x -= 8
 
                 # if items_within_percentage(distance_left_eye_to_nose, distance_right_eye_to_nose, 0.2):
                 #     pass
@@ -249,6 +254,7 @@ def average_of_array(a):
         res[1] += item[1]
     return res[0] / len(a), res[1] / len(a)
 
+
 def is_mouth_open(the_mouth):
     is_open = False
 
@@ -260,8 +266,8 @@ def is_mouth_open(the_mouth):
     mar = avg / D
 
     # print('mar', mar)
-    threshold = 0.6
-    print(mar)
+    threshold = 0.8
+    #print(mar)
     if mar >= threshold:
         is_open = True
     return is_open
