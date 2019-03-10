@@ -107,9 +107,9 @@ def main():
                 # # print(shape)
                 # # cv2.drawContours(frame, [mouthHull], -1, (0, 255, 0), 1)
                 #
-                # left_eye = shape[
-                #            face_utils.FACIAL_LANDMARKS_IDXS["left_eye"][0]:face_utils.FACIAL_LANDMARKS_IDXS["left_eye"][
-                #                1]]
+                left_eye = shape[
+                           face_utils.FACIAL_LANDMARKS_IDXS["left_eye"][0]:face_utils.FACIAL_LANDMARKS_IDXS["left_eye"][
+                               1]]
                 # # left = smile(mouth)
                 # # print(left_eye)
                 # leftHull = cv2.convexHull(left_eye)
@@ -118,17 +118,17 @@ def main():
                 # # print(shape)
                 # cv2.drawContours(frame, [left_eye], -1, (0, 255, 0), 1)
                 #
-                # right_eye = shape[
-                #             face_utils.FACIAL_LANDMARKS_IDXS["right_eye"][0]:
-                #             face_utils.FACIAL_LANDMARKS_IDXS["right_eye"][1]]
+                right_eye = shape[
+                            face_utils.FACIAL_LANDMARKS_IDXS["right_eye"][0]:
+                            face_utils.FACIAL_LANDMARKS_IDXS["right_eye"][1]]
                 # # left = smile(mouth)
                 # rightHull = cv2.convexHull(right_eye)
                 # # print(shape)
                 # cv2.drawContours(frame, [shape], -1, (0, 255, 0), 1)
                 #
-                # if eye_aspect_ratio(left_eye) < 0.18 and eye_aspect_ratio(right_eye) < 0.18:
-                #     mouse.press(Button.left)
-                #     mouse.release(Button.left)
+                if eye_aspect_ratio(left_eye) < 0.18 and eye_aspect_ratio(right_eye) < 0.18:
+                    mouse.press(Button.left)
+                    mouse.release(Button.left)
 
                 # nose = shape[
                 #        face_utils.FACIAL_LANDMARKS_IDXS["nose"][0]:face_utils.FACIAL_LANDMARKS_IDXS["nose"][1]]
