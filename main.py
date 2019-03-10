@@ -11,6 +11,26 @@ from pynput.mouse import Button, Controller
 mouse = Controller()
 
 
+def get_head_pose(shape):
+    image_pts = np.float32([shape[17], shape[21], shape[22], shape[26], shape[36],
+                            shape[39], shape[42], shape[45], shape[31], shape[35],
+                            shape[48], shape[54], shape[57], shape[8]])
+
+    _, rotation_vec, translation_vec = cv2.solvePnP(object_pts, image_pts, cam_matrix, dist_coeffs)
+
+    reprojectdst, _ = cv2.projectPoints(reprojectsrc, rotation_vec, translation_vec, cam_matrix,
+                                        dist_coeffs)
+
+    reprojectdst = tuple(map(tuple, reprojectdst.reshape(8, 2)))
+
+    # calc euler angle
+    rotation_mat, _ = cv2.Rodrigues(rotation_vec)
+    pose_mat = cv2.hconcat((rotation_mat, translation_vec))
+    _, _, _, _, _, _, euler_angle = cv2.decomposeProjectionMatrix(pose_mat)
+
+    return reprojectdst, euler_angle
+
+
 def average_of_array(a):
     res = [0, 0]
     for item in a:
@@ -27,6 +47,8 @@ def items_within_percentage(num1, num2, percent):
 
 
 def smile(the_mouth):
+    if True:
+        return 0
     A = dist.euclidean(the_mouth[3], the_mouth[9])
     B = dist.euclidean(the_mouth[2], the_mouth[10])
     C = dist.euclidean(the_mouth[4], the_mouth[8])
@@ -60,7 +82,7 @@ shape_predictor = "shape_predictor_68_face_landmarks.dat"
 detector = dlib.get_frontal_face_detector()
 predictor = dlib.shape_predictor(shape_predictor)
 
-#(mStart, mEnd) = face_utils.FACIAL_LANDMARKS_IDXS["mouth"]
+# (mStart, mEnd) = face_utils.FACIAL_LANDMARKS_IDXS["mouth"]
 
 print("[INFO] starting video stream thread...")
 vs = VideoStream(src=0).start()
@@ -72,7 +94,7 @@ cv2.namedWindow("test")
 
 while True:
     frame = vs.read()
-    frame = imutils.resize(frame, width=1000)
+    frame = imutils.resize(frame, width=256)
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     rects = detector(gray, 0)
     for rect in rects:
@@ -84,62 +106,62 @@ while True:
         # print(shape)
         cv2.drawContours(frame, [mouthHull], -1, (0, 255, 0), 1)
 
-        left_eye = shape[face_utils.FACIAL_LANDMARKS_IDXS["left_eye"][0]:face_utils.FACIAL_LANDMARKS_IDXS["left_eye"][1]]
-        #left = smile(mouth)
-        #print(left_eye)
+        left_eye = shape[
+                   face_utils.FACIAL_LANDMARKS_IDXS["left_eye"][0]:face_utils.FACIAL_LANDMARKS_IDXS["left_eye"][1]]
+        # left = smile(mouth)
+        # print(left_eye)
         leftHull = cv2.convexHull(left_eye)
-        #print(eye_aspect_ratio(left_eye))
-
+        # print(eye_aspect_ratio(left_eye))
 
         # print(shape)
         cv2.drawContours(frame, [left_eye], -1, (0, 255, 0), 1)
 
-        right_eye = shape[face_utils.FACIAL_LANDMARKS_IDXS["right_eye"][0]:face_utils.FACIAL_LANDMARKS_IDXS["right_eye"][1]]
+        right_eye = shape[
+                    face_utils.FACIAL_LANDMARKS_IDXS["right_eye"][0]:face_utils.FACIAL_LANDMARKS_IDXS["right_eye"][1]]
         # left = smile(mouth)
         rightHull = cv2.convexHull(right_eye)
         # print(shape)
         cv2.drawContours(frame, [shape], -1, (0, 255, 0), 1)
 
-
-        # if eye_aspect_ratio(left_eye) < 0.18 and eye_aspect_ratio(right_eye) < 0.18:
-        #     mouse.press(Button.left)
-        #     mouse.release(Button.left)
+        if eye_aspect_ratio(left_eye) < 0.18 and eye_aspect_ratio(right_eye) < 0.18:
+            mouse.press(Button.left)
+            mouse.release(Button.left)
 
         nose = shape[
-                    face_utils.FACIAL_LANDMARKS_IDXS["nose"][0]:face_utils.FACIAL_LANDMARKS_IDXS["nose"][1]]
+               face_utils.FACIAL_LANDMARKS_IDXS["nose"][0]:face_utils.FACIAL_LANDMARKS_IDXS["nose"][1]]
         # left = smile(mouth)
         noseHull = cv2.convexHull(nose)
         # print(shape)
         cv2.drawContours(frame, [noseHull], -1, (0, 255, 0), 1)
 
-        #distance_left_eye_to_nose = average_of_array(left_eye)
+        # distance_left_eye_to_nose = average_of_array(left_eye)
 
-        #print("LEFT:", average_of_array(left_eye))
-        #print("NOSE:", average_of_array(nose))
-        #print("RIGHT:",average_of_array(right_eye))
-        #print("------")
+        # print("LEFT:", average_of_array(left_eye))
+        # print("NOSE:", average_of_array(nose))
+        # print("RIGHT:",average_of_array(right_eye))
+        # print("------")
 
         distance_left_eye_to_nose = average_of_array(left_eye)[0] - average_of_array(nose)[0]
         distance_right_eye_to_nose = average_of_array(nose)[0] - average_of_array(right_eye)[0]
         distance_between_eyes = average_of_array(left_eye)[0] - average_of_array(right_eye)[0]
 
         average_of_eyes = average_of_array(left_eye + right_eye)
-        average_of_nose = nose[6] #average_of_array(nose)
+        average_of_nose = nose[6]  # average_of_array(nose)
         average_of_mouth = average_of_array(mouth)
 
         distance_eye_to_nose = average_of_eyes[1] - average_of_nose[1]
         distance_nose_to_mouth = average_of_mouth[1] - average_of_nose[1]
 
-        x, y = 0,0
+        x, y = 0, 0
 
-        print(distance_eye_to_nose / distance_nose_to_mouth * distance_between_eyes)
+        print(distance_between_eyes / (distance_eye_to_nose / distance_nose_to_mouth))
 
-        if distance_eye_to_nose / distance_nose_to_mouth < 3:
-            print("UP")
-            y -= 5
-        else:
-            print("DOWN")
-            y += 5
+        # if distance_eye_to_nose / distance_nose_to_mouth < 3:
+        #     print("UP")
+        #     y -= 5
+        # else:
+        #     print("DOWN")
+        #     y += 5
 
         if items_within_percentage(distance_left_eye_to_nose, distance_right_eye_to_nose, 0.2):
             pass
@@ -161,7 +183,6 @@ while True:
         if x != 0 or y != 0:
             print("Moving", x, y)
             mouse.move(x, y)
-
 
         if mar <= .3 or mar > .38:
             COUNTER += 1
