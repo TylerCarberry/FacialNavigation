@@ -26,9 +26,21 @@ from google.cloud.speech import types
 
 
 def run_quickstart():
+
+    # Imports the Google Cloud client library
+    # [START speech_python_migration_imports]
+    from google.cloud import speech
+    from google.cloud.speech import enums
+    from google.cloud.speech import types
+    # [END speech_python_migration_imports]
+
+    # Instantiates a client
+    # [START speech_python_migration_client]
     client = speech.SpeechClient()
+    # [END speech_python_migration_client]
 
     speech2txt.record.run(7)
+    # Instantiates an audio file
 
     # The name of the audio file to transcribe
     file_name = os.path.join(
@@ -50,7 +62,7 @@ def run_quickstart():
     for result in response.results:
         keyboard.write(result.alternatives[0].transcript)
         print('Transcript: {}'.format(result.alternatives[0].transcript))
-
+    # [END speech_quickstart]
 
 if __name__ == '__main__':
     run_quickstart()
