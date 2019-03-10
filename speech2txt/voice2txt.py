@@ -26,7 +26,6 @@ from google.cloud.speech import types
 
 
 def run_quickstart():
-
     # Imports the Google Cloud client library
     # [START speech_python_migration_imports]
     from google.cloud import speech
@@ -45,7 +44,7 @@ def run_quickstart():
     # The name of the audio file to transcribe
     file_name = os.path.join(
         os.path.dirname(__file__),
-        'file.wav')
+        '../file.wav')
 
     # Loads the audio into memory
     with io.open(file_name, 'rb') as audio_file:

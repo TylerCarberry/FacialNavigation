@@ -11,13 +11,12 @@ from scipy.spatial import distance as dist
 
 mouse = Controller()
 
-face_landmark_path = '../shape_predictor_68_face_landmarks.dat'
+face_landmark_path = 'shape_predictor_68_face_landmarks.dat'
 
 K = [6.5308391993466671e+002, 0.0, 3.1950000000000000e+002,
      0.0, 6.5308391993466671e+002, 2.3950000000000000e+002,
      0.0, 0.0, 1.0]
 D = [7.0834633684407095e-002, 6.9140193737175351e-002, 0.0, 0.0, -1.3073460323689292e+000]
-
 cam_matrix = np.array(K).reshape(3, 3).astype(np.float32)
 dist_coeffs = np.array(D).reshape(5, 1).astype(np.float32)
 
@@ -261,7 +260,8 @@ def is_mouth_open(the_mouth):
     mar = avg / D
 
     # print('mar', mar)
-    threshold = 0.55
+    threshold = 0.6
+    print(mar)
     if mar >= threshold:
         is_open = True
     return is_open
