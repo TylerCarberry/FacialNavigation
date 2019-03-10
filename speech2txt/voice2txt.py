@@ -15,7 +15,11 @@
 import sys
 import io
 import os
-import record
+
+import keyboard
+
+import speech2txt.record
+
 from google.cloud import speech
 from google.cloud.speech import enums
 from google.cloud.speech import types
@@ -24,7 +28,7 @@ from google.cloud.speech import types
 def run_quickstart():
     client = speech.SpeechClient()
 
-    record.run(7)
+    speech2txt.record.run(7)
 
     # The name of the audio file to transcribe
     file_name = os.path.join(
@@ -44,6 +48,7 @@ def run_quickstart():
     response = client.recognize(config, audio)
 
     for result in response.results:
+        keyboard.write(result.alternatives[0].transcript)
         print('Transcript: {}'.format(result.alternatives[0].transcript))
 
 

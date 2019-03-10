@@ -2,6 +2,9 @@ import cv2
 import dlib
 import imutils
 import numpy as np
+import speech2txt.voice2txt
+import time
+
 from imutils import face_utils
 from pynput.mouse import Button, Controller
 from scipy.spatial import distance as dist
@@ -46,6 +49,7 @@ line_pairs = [[0, 1], [1, 2], [2, 3], [3, 0],
               [4, 5], [5, 6], [6, 7], [7, 4],
               [0, 4], [1, 5], [2, 6], [3, 7]]
 
+finished = False
 
 def get_head_pose(shape):
     image_pts = np.float32([shape[17], shape[21], shape[22], shape[26], shape[36],
@@ -70,6 +74,7 @@ def get_head_pose(shape):
 def main():
     # return
     cap = cv2.VideoCapture(0)
+    timestamp = 0
     if not cap.isOpened():
         print("Unable to connect to camera.")
         return
@@ -101,7 +106,13 @@ def main():
                 # cv2.putText(frame, "Z: " + "{:7.2f}".format(euler_angle[2, 0]), (20, 80), cv2.FONT_HERSHEY_SIMPLEX,
                 #             0.75, (0, 0, 0), thickness=2)
 
-                # mouth = shape[face_utils.FACIAL_LANDMARKS_IDXS["mouth"][0]:face_utils.FACIAL_LANDMARKS_IDXS["mouth"][1]]
+                the_mouth = shape[face_utils.FACIAL_LANDMARKS_IDXS["mouth"][0]:face_utils.FACIAL_LANDMARKS_IDXS["mouth"][1]]
+                isMouthOpen = is_mouth_open(the_mouth)
+
+                if isMouthOpen and timestamp < time.time() - 10:
+                    timestamp = time.time()
+                    speech2txt.voice2txt.run_quickstart()
+
                 # # mar = smile(mouth)
                 # # mouthHull = cv2.convexHull(mouth)
                 # # print(shape)
@@ -249,7 +260,7 @@ def is_mouth_open(the_mouth):
     D = dist.euclidean(the_mouth[0], the_mouth[6])
     mar = avg / D
 
-    print('mar', mar)
+    # print('mar', mar)
     threshold = 0.55
     if mar >= threshold:
         is_open = True
