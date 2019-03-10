@@ -13,26 +13,17 @@
 # limitations under the License.
 
 import sys
+import io
+import os
+import record
+from google.cloud import speech
+from google.cloud.speech import enums
+from google.cloud.speech import types
+
 
 def run_quickstart():
-    # [START speech_quickstart]
-    import io
-    import os
-    import record
-
-    # Imports the Google Cloud client library
-    # [START speech_python_migration_imports]
-    from google.cloud import speech
-    from google.cloud.speech import enums
-    from google.cloud.speech import types
-    # [END speech_python_migration_imports]
-
-    # Instantiates a client
-    # [START speech_python_migration_client]
     client = speech.SpeechClient()
-    # [END speech_python_migration_client]
 
-    # Instantiates an audio file
     record.run(7)
 
     # The name of the audio file to transcribe
@@ -54,7 +45,7 @@ def run_quickstart():
 
     for result in response.results:
         print('Transcript: {}'.format(result.alternatives[0].transcript))
-    # [END speech_quickstart]
+
 
 if __name__ == '__main__':
     run_quickstart()
