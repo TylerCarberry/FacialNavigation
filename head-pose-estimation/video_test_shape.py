@@ -94,50 +94,48 @@ def main():
                 for start, end in line_pairs:
                     cv2.line(frame, reprojectdst[start], reprojectdst[end], (0, 0, 255))
 
-                cv2.putText(frame, "X: " + "{:7.2f}".format(euler_angle[0, 0]), (20, 20), cv2.FONT_HERSHEY_SIMPLEX,
-                            0.75, (0, 0, 0), thickness=2)
-                cv2.putText(frame, "Y: " + "{:7.2f}".format(euler_angle[1, 0]), (20, 50), cv2.FONT_HERSHEY_SIMPLEX,
-                            0.75, (0, 0, 0), thickness=2)
-                cv2.putText(frame, "Z: " + "{:7.2f}".format(euler_angle[2, 0]), (20, 80), cv2.FONT_HERSHEY_SIMPLEX,
-                            0.75, (0, 0, 0), thickness=2)
+                # cv2.putText(frame, "X: " + "{:7.2f}".format(euler_angle[0, 0]), (20, 20), cv2.FONT_HERSHEY_SIMPLEX,
+                #             0.75, (0, 0, 0), thickness=2)
+                # cv2.putText(frame, "Y: " + "{:7.2f}".format(euler_angle[1, 0]), (20, 50), cv2.FONT_HERSHEY_SIMPLEX,
+                #             0.75, (0, 0, 0), thickness=2)
+                # cv2.putText(frame, "Z: " + "{:7.2f}".format(euler_angle[2, 0]), (20, 80), cv2.FONT_HERSHEY_SIMPLEX,
+                #             0.75, (0, 0, 0), thickness=2)
 
-                mouth = shape[face_utils.FACIAL_LANDMARKS_IDXS["mouth"][0]:face_utils.FACIAL_LANDMARKS_IDXS["mouth"][1]]
-                # mar = smile(mouth)
-                isMouthOpen = is_mouth_open(mouth)
-                print('is mouth open? ', isMouthOpen)
-                mouthHull = cv2.convexHull(mouth)
-                # print(shape)
-                cv2.drawContours(frame, [mouthHull], -1, (0, 255, 0), 1)
+                # mouth = shape[face_utils.FACIAL_LANDMARKS_IDXS["mouth"][0]:face_utils.FACIAL_LANDMARKS_IDXS["mouth"][1]]
+                # # mar = smile(mouth)
+                # # mouthHull = cv2.convexHull(mouth)
+                # # print(shape)
+                # # cv2.drawContours(frame, [mouthHull], -1, (0, 255, 0), 1)
+                #
+                # left_eye = shape[
+                #            face_utils.FACIAL_LANDMARKS_IDXS["left_eye"][0]:face_utils.FACIAL_LANDMARKS_IDXS["left_eye"][
+                #                1]]
+                # # left = smile(mouth)
+                # # print(left_eye)
+                # leftHull = cv2.convexHull(left_eye)
+                # # print(eye_aspect_ratio(left_eye))
+                #
+                # # print(shape)
+                # cv2.drawContours(frame, [left_eye], -1, (0, 255, 0), 1)
+                #
+                # right_eye = shape[
+                #             face_utils.FACIAL_LANDMARKS_IDXS["right_eye"][0]:
+                #             face_utils.FACIAL_LANDMARKS_IDXS["right_eye"][1]]
+                # # left = smile(mouth)
+                # rightHull = cv2.convexHull(right_eye)
+                # # print(shape)
+                # cv2.drawContours(frame, [shape], -1, (0, 255, 0), 1)
+                #
+                # if eye_aspect_ratio(left_eye) < 0.18 and eye_aspect_ratio(right_eye) < 0.18:
+                #     mouse.press(Button.left)
+                #     mouse.release(Button.left)
 
-                left_eye = shape[
-                           face_utils.FACIAL_LANDMARKS_IDXS["left_eye"][0]:face_utils.FACIAL_LANDMARKS_IDXS["left_eye"][
-                               1]]
+                # nose = shape[
+                #        face_utils.FACIAL_LANDMARKS_IDXS["nose"][0]:face_utils.FACIAL_LANDMARKS_IDXS["nose"][1]]
                 # left = smile(mouth)
-                # print(left_eye)
-                leftHull = cv2.convexHull(left_eye)
-                # print(eye_aspect_ratio(left_eye))
-
+                # noseHull = cv2.convexHull(nose)
                 # print(shape)
-                cv2.drawContours(frame, [left_eye], -1, (0, 255, 0), 1)
-
-                right_eye = shape[
-                            face_utils.FACIAL_LANDMARKS_IDXS["right_eye"][0]:
-                            face_utils.FACIAL_LANDMARKS_IDXS["right_eye"][1]]
-                # left = smile(mouth)
-                rightHull = cv2.convexHull(right_eye)
-                # print(shape)
-                cv2.drawContours(frame, [shape], -1, (0, 255, 0), 1)
-
-                if eye_aspect_ratio(left_eye) < 0.18 and eye_aspect_ratio(right_eye) < 0.18:
-                    mouse.press(Button.left)
-                    mouse.release(Button.left)
-
-                nose = shape[
-                       face_utils.FACIAL_LANDMARKS_IDXS["nose"][0]:face_utils.FACIAL_LANDMARKS_IDXS["nose"][1]]
-                # left = smile(mouth)
-                noseHull = cv2.convexHull(nose)
-                # print(shape)
-                cv2.drawContours(frame, [noseHull], -1, (0, 255, 0), 1)
+                # cv2.drawContours(frame, [noseHull], -1, (0, 255, 0), 1)
 
                 # distance_left_eye_to_nose = average_of_array(left_eye)
 
@@ -145,20 +143,20 @@ def main():
                 # print("NOSE:", average_of_array(nose))
                 # print("RIGHT:",average_of_array(right_eye))
                 # print("------")
-
-                distance_left_eye_to_nose = average_of_array(left_eye)[0] - average_of_array(nose)[0]
-                distance_right_eye_to_nose = average_of_array(nose)[0] - average_of_array(right_eye)[0]
-                distance_between_eyes = average_of_array(left_eye)[0] - average_of_array(right_eye)[0]
-
-                average_of_eyes = average_of_array(left_eye + right_eye)
-                average_of_nose = nose[6]  # average_of_array(nose)
-                average_of_mouth = average_of_array(mouth)
-
-                distance_eye_to_nose = average_of_eyes[1] - average_of_nose[1]
-                distance_nose_to_mouth = average_of_mouth[1] - average_of_nose[1]
-
+                #
+                # distance_left_eye_to_nose = average_of_array(left_eye)[0] - average_of_array(nose)[0]
+                # distance_right_eye_to_nose = average_of_array(nose)[0] - average_of_array(right_eye)[0]
+                # distance_between_eyes = average_of_array(left_eye)[0] - average_of_array(right_eye)[0]
+                #
+                # average_of_eyes = average_of_array(left_eye + right_eye)
+                # average_of_nose = nose[6]  # average_of_array(nose)
+                # average_of_mouth = average_of_array(mouth)
+                #
+                # distance_eye_to_nose = average_of_eyes[1] - average_of_nose[1]
+                # distance_nose_to_mouth = average_of_mouth[1] - average_of_nose[1]
+                #
                 x, y = 0, 0
-
+                #
                 # print(distance_between_eyes / (distance_eye_to_nose / distance_nose_to_mouth))
 
                 if euler_angle[0, 0] < -5:

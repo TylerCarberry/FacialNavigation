@@ -21,12 +21,9 @@ def run_quickstart():
     import os
     import record
 
+def run_quickstart(timeinsecs):
     # Imports the Google Cloud client library
     # [START speech_python_migration_imports]
-    from google.cloud import speech
-    from google.cloud.speech import enums
-    from google.cloud.speech import types
-    # [END speech_python_migration_imports]
 
     # Instantiates a client
     # [START speech_python_migration_client]
