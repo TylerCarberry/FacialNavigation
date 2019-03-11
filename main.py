@@ -4,6 +4,7 @@ import imutils
 import numpy as np
 import speech2txt.voice2txt
 import time
+import os
 
 from imutils import face_utils
 from pynput.mouse import Button, Controller
@@ -111,7 +112,7 @@ def main():
                             face_utils.FACIAL_LANDMARKS_IDXS["mouth"][0]:face_utils.FACIAL_LANDMARKS_IDXS["mouth"][1]]
                 isMouthOpen = is_mouth_open(the_mouth)
 
-                if isMouthOpen and timestamp < time.time() - 10:
+                if isMouthOpen and timestamp < time.time() - 6:
                     timestamp = time.time()
                     speech2txt.voice2txt.run_quickstart()
 

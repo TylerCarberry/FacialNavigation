@@ -38,7 +38,7 @@ def run_quickstart():
     client = speech.SpeechClient()
     # [END speech_python_migration_client]
 
-    speech2txt.record.run(7)
+    speech2txt.record.run(3)
     # Instantiates an audio file
 
     # The name of the audio file to transcribe
